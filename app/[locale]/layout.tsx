@@ -30,6 +30,11 @@ export async function generateMetadata({ params: { locale } }: Props) {
   return {
     title: t("title"),
     description: t("subtitle"),
+    icons: {
+      icon: "/favicon.svg",
+      shortcut: "/favicon.svg",
+      apple: "/favicon.svg",
+    },
   };
 }
 

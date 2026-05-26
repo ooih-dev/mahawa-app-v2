@@ -174,7 +174,7 @@ export default function ShopPage() {
             {/* Product Image */}
             <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-dark-700 dark:to-dark-800 flex items-center justify-center relative overflow-hidden">
               <img
-                src={`${IMG_BASE}${product.image}&width=400`}
+                src={`${IMG_BASE}${product.image}?width=400`}
                 alt={product.name}
                 className="w-full h-full object-cover"
                 loading="lazy"
