@@ -1,1 +1,7 @@
-{"buildCommand": "rm -rf .next && next build","framework": "nextjs"}
+{
+  "buildCommand": "rm -rf .next .vercel/cache && next build --no-cache",
+  "framework": "nextjs",
+  "github": {
+    "silent": true
+  }
+}
