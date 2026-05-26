@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { useWater } from "@/lib/store";
-import ProgressRing from "@/components/ProgressRing";
 import WaterGlass from "@/components/WaterGlass";
 import {
   WaterDrop,
@@ -10,8 +9,8 @@ import {
   PlusIcon,
   ClockIcon,
   CheckIcon,
-  TargetIcon,
   ZapIcon,
+  TargetIcon,
 } from "@/icons";
 import { useState, useEffect } from "react";
 
@@ -37,7 +36,7 @@ export default function TrackerPage() {
   const isGoalReached = data.total >= data.goal;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Header */}
       <header
         className={`text-center transition-all duration-500 ${
@@ -55,9 +54,59 @@ export default function TrackerPage() {
         </p>
       </header>
 
-      {/* Streak */}
+      {/* Water Glass — Hero */}
       <div
-        className={`glass-card rounded-3xl p-4 transition-all duration-500 delay-100 ${
+        className={`glass-card rounded-3xl p-6 pt-8 text-center transition-all duration-500 delay-100 ${
+          animateIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+        }`}
+      >
+        {isGoalReached && (
+          <div className="mb-2 inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 text-sm font-medium animate-scale-in">
+            <CheckIcon size={16} />
+            {t("tracker.goalReached")}
+          </div>
+        )}
+        {rippleId && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-32 h-32 rounded-full border-2 border-brand-300 animate-ripple" />
+          </div>
+        )}
+        <WaterGlass
+          progress={progress}
+          onClick={() => handleAddWater(250)}
+          className="mx-auto"
+        />
+      </div>
+
+      {/* Quick Add */}
+      <div
+        className={`glass-card rounded-3xl p-4 transition-all duration-500 delay-150 ${
+          animateIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+        }`}
+      >
+        <div className="flex items-center gap-2 mb-3">
+          <ZapIcon size={16} className="text-brand-500" />
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
+            {t("tracker.quickAdd")}
+          </h3>
+        </div>
+        <div className="flex gap-3">
+          {quickAddAmounts.map((amount) => (
+            <button
+              key={amount}
+              onClick={() => handleAddWater(amount)}
+              className="flex-1 py-3 rounded-2xl text-sm font-medium transition-all duration-200 bg-[var(--color-accent-light)] text-brand-600 hover:bg-brand-200 dark:hover:bg-brand-800 hover:shadow-soft active:scale-95"
+            >
+              <PlusIcon size={14} className="inline mr-1" />
+              {amount} {t("tracker.ml")}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Streak + Daily Total */}
+      <div
+        className={`glass-card rounded-3xl p-4 transition-all duration-500 delay-200 ${
           animateIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >
@@ -83,87 +132,19 @@ export default function TrackerPage() {
               {t("tracker.dailyGoal")}
             </p>
             <p className="text-lg font-bold text-brand-500">
+              <TargetIcon size={14} className="inline mr-1" />
               {data.total}{" "}
               <span className="text-sm font-normal text-[var(--color-text-secondary)]">
-                {t("tracker.ml")}
+                {t("tracker.ml")} / {data.goal} {t("tracker.ml")}
               </span>
             </p>
           </div>
         </div>
       </div>
 
-      {/* Main Progress Card */}
-      <div
-        className={`glass-card rounded-3xl p-6 text-center transition-all duration-500 delay-150 ${
-          animateIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
-      >
-        {isGoalReached && (
-          <div className="mb-4 inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 text-sm font-medium animate-scale-in">
-            <CheckIcon size={16} />
-            {t("tracker.goalReached")}
-          </div>
-        )}
-
-        <div className="relative flex justify-center">
-          <ProgressRing progress={progress} size={160} strokeWidth={10} />
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <TargetIcon size={24} className="text-brand-500 mb-1" />
-            <span className="text-2xl font-bold text-[var(--color-text-primary)]">
-              {Math.round(progress)}%
-            </span>
-            <span className="text-xs text-[var(--color-text-muted)]">
-              {data.total} / {data.goal} {t("tracker.ml")}
-            </span>
-          </div>
-        </div>
-
-        <p className="text-sm text-[var(--color-text-secondary)] mt-5 mb-4">
-          {isGoalReached
-            ? t("tracker.goalReachedDesc")
-            : t("tracker.tapToAdd")}
-        </p>
-
-        {/* Water Glass */}
-        <div className="flex justify-center relative">
-          {rippleId && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-24 h-24 rounded-full border-2 border-brand-300 animate-ripple" />
-            </div>
-          )}
-          <WaterGlass onClick={() => handleAddWater(250)} />
-        </div>
-      </div>
-
-      {/* Quick Add */}
-      <div
-        className={`glass-card rounded-3xl p-4 transition-all duration-500 delay-200 ${
-          animateIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
-      >
-        <div className="flex items-center gap-2 mb-3">
-          <ZapIcon size={16} className="text-brand-500" />
-          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
-            {t("tracker.quickAdd")}
-          </h3>
-        </div>
-        <div className="flex gap-3">
-          {quickAddAmounts.map((amount) => (
-            <button
-              key={amount}
-              onClick={() => handleAddWater(amount)}
-              className="flex-1 py-3 rounded-2xl text-sm font-medium transition-all duration-200 bg-[var(--color-accent-light)] text-brand-600 hover:bg-brand-200 dark:hover:bg-brand-800 hover:shadow-soft active:scale-95"
-            >
-              <PlusIcon size={14} className="inline mr-1" />
-              {amount} {t("tracker.ml")}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Schedule */}
       <div
-        className={`glass-card rounded-3xl p-4 transition-all duration-500 delay-250 ${
+        className={`glass-card rounded-3xl p-4 transition-all duration-500 delay-300 ${
           animateIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >
@@ -174,7 +155,7 @@ export default function TrackerPage() {
           </h3>
         </div>
         <div className="space-y-1">
-          {data.schedule.map((slot, i) => (
+          {(data.schedule ?? []).map((slot, i) => (
             <div
               key={i}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all duration-200 ${

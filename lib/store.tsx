@@ -81,8 +81,15 @@ export function WaterProvider({ children }: { children: React.ReactNode }) {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        if (parsed.date === getTodayString()) {
-          setData(parsed);
+        if (parsed && typeof parsed === 'object') {
+          if (!Array.isArray(parsed.schedule)) parsed.schedule = getDefaultData().schedule;
+          if (!Array.isArray(parsed.entries)) parsed.entries = getDefaultData().entries;
+          if (parsed.date === getTodayString()) {
+            setData({
+              ...getDefaultData(),
+              ...parsed,
+            });
+          }
         }
       } catch {}
     }
@@ -136,9 +143,10 @@ export function WaterProvider({ children }: { children: React.ReactNode }) {
 
       const newEntry = { amount, timestamp: Date.now() };
       const newTotal = prev.total + amount;
-      const newSchedule = prev.schedule.map((s, i) => ({
+      const schedule = prev.schedule ?? defaultSchedule.map((s) => ({ ...s }));
+      const newSchedule = schedule.map((s, i) => ({
         ...s,
-        completed: i < Math.floor(newTotal / 250) && i < prev.schedule.length,
+        completed: i < Math.floor(newTotal / 250) && i < schedule.length,
       }));
 
       return {

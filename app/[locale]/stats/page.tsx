@@ -14,15 +14,16 @@ export default function StatsPage() {
     setAnimateIn(true);
   }, []);
 
+  const safeStats = weeklyStats ?? [];
   const average =
-    weeklyStats.reduce((acc, s) => acc + s.total, 0) / weeklyStats.length;
+    safeStats.reduce((acc, s) => acc + s.total, 0) / (safeStats.length || 1);
 
-  const bestDay = weeklyStats.reduce(
+  const bestDay = safeStats.reduce(
     (best, s) => (s.total > best.total ? s : best),
-    weeklyStats[0]
+    safeStats[0]
   );
 
-  const maxVal = Math.max(...weeklyStats.map((s) => s.goal), 2000);
+  const maxVal = Math.max(...safeStats.map((s) => s.goal), 2000);
 
   return (
     <div className="space-y-6">
@@ -82,7 +83,7 @@ export default function StatsPage() {
         </h3>
 
         <div className="flex items-end justify-between gap-2 h-40">
-          {weeklyStats.map((stat, i) => {
+          {(safeStats).map((stat, i) => {
             const height = stat.total > 0 ? (stat.total / maxVal) * 100 : 0;
             const isToday = i === 6;
             return (
